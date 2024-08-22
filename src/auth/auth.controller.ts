@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UnauthorizedException, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, UnauthorizedException, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDTO } from './dto/signup.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -37,10 +37,20 @@ export class AuthController {
   @Get("refresh-tokens")
   async refreshToken(@Cookie(REFRESH_TOKEN) token: Token, @Res({ passthrough: true }) res: Response, @UserAgent() agent: string) {
     if (!token) { throw new UnauthorizedException() }
-    console.log(token)
     const tokens = await this.authService.refreshToken(token.token, agent)
     await this.setRefreshTokenCookies(tokens, res)
     return { accessToken: tokens.accessToken }
+  }
+
+  @Get("logout")
+  async logout(@Cookie(REFRESH_TOKEN) token: Token, @Res({ passthrough: true }) res: Response) {
+    if (!token) {
+      res.sendStatus(HttpStatus.OK)
+      return
+    }
+    await this.authService.logout(token.token)
+    res.cookie(REFRESH_TOKEN, "", { httpOnly: true, secure: true, expires: new Date() })
+    res.sendStatus(HttpStatus.OK)
   }
 
   private async setRefreshTokenCookies(token: Tokens, res: Response) {

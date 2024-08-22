@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { PrismaService } from '@prisma/prisma.service';
-import { genSalt, genSaltSync, hashSync } from 'bcrypt';
+import { genSaltSync, hashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +30,8 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<{ message: string }> {
-    const deleteUser = await this.prisma.user.delete({ where: { id } });
-    return { message: 'Пользователь успешно удален!' };
+    const deleted = await this.prisma.user.delete({ where: { id }, select: { id: true } });
+    return { message: `Пользователь с ID = ${deleted.id} успешно удален!` };
   }
 
   private passwordHash(password: string) {

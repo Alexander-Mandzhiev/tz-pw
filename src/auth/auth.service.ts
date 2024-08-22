@@ -75,4 +75,8 @@ export class AuthService {
     })
   }
 
+  async logout(token: string) {
+    return await this.prismaService.token.delete({ where: { token } })
+  }
+
 }

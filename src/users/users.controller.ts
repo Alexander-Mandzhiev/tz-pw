@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { DeleteMessage, UpdateUsersResponse, UserResponse } from './types';
+import { CurrentUser } from '@common/decorators';
+import { JwtPayload } from '@auth/types';
 
 @Controller('user')
 export class UsersController {
@@ -19,8 +21,8 @@ export class UsersController {
 
   @ApiOkResponse({ type: UserResponse })
   @HttpCode(HttpStatus.OK)
-  @Get(":id")
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @Get()
+  async findOne(@CurrentUser("id") id: string) {
     const { password, ...profile } = await this.usersService.findOneById(id);
     return profile
   }
@@ -29,15 +31,15 @@ export class UsersController {
   @ApiOkResponse({ type: UpdateUsersResponse })
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
-  @Patch(":id")
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UserDto) {
+  @Patch()
+  async update(@CurrentUser("id") id: string, @Body() dto: UserDto) {
     return this.usersService.update(id, dto);
   }
 
   @ApiOkResponse({ type: DeleteMessage })
   @HttpCode(HttpStatus.OK)
-  @Delete(":id")
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  @Delete()
+  async remove(@CurrentUser("id") id: string) {
     return this.usersService.remove(id);
   }
 }
