@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, Length, Matches, Validate } from "class-validator";
-import { MESSAGES, REGEX } from "@auth/config/utils";
+import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
 import { SignInDTO } from "./signin.dto";
+import { MESSAGES, REGEX } from "@common/utils";
 
 export class SignUpDTO extends SignInDTO {
 

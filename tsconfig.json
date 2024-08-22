@@ -41,7 +41,13 @@
       ],
       "@auth/*": [
         "src/auth/*"
-      ]
+      ],
+      "@column": [
+        "src/column"
+      ],
+      "@column/*": [
+        "src/column/*"
+      ],
     }
   }
 }

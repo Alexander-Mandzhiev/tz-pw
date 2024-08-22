@@ -21,8 +21,7 @@ export class AuthService {
 
   async signUp(dto: SignUpDTO, agent: string) {
     if (dto.password != dto.verify) { throw new BadRequestException('Пароли не совпадают!'); }
-    const userExist = await this.userService.findOneByEmail(dto.email)
-    console.log(userExist)
+    const userExist = await this.userService.findOne(dto.email)
     if (userExist) { throw new ConflictException('Пользователь с таким email зарегистрирован!'); }
     const user = await this.userService.create(dto)
     return await this.createAndExistTokens(user, agent)
@@ -30,7 +29,7 @@ export class AuthService {
 
 
   async signIn(dto: SignInDTO, agent: string): | Promise<Tokens> {
-    const user = await this.userService.findOneByEmail(dto.email)
+    const user = await this.userService.findOne(dto.email, true)
     if (!user || !compareSync(dto.password, user.password)) throw new UnauthorizedException('Не верный логин или пароль!');
     return await this.createAndExistTokens(user, agent)
   }
@@ -40,7 +39,7 @@ export class AuthService {
     if (!token) { throw new UnauthorizedException() }
     await this.prismaService.token.delete({ where: { token: refreshToken } })
     if (new Date(token.exp) < new Date()) { throw new UnauthorizedException() }
-    const user = await this.userService.findOneById(token.userId)
+    const user = await this.userService.findOne(token.userId)
     return await this.createAndExistTokens(user, agent)
   }
 
@@ -52,7 +51,7 @@ export class AuthService {
 
 
   private async generateTokens(user: User, agent: string) {
-    const accessToken = "Bearer " + this.jwtService.sign({ id: user.id, email: user.email })
+    const accessToken = "Bearer " + this.jwtService.sign({ id: user.id, email: user.email, username: user.username })
     const refreshToken = await this.getRefreshToken(user.id, agent)
     return { accessToken, refreshToken }
   }

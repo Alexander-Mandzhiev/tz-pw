@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 
 export class IBase {
-    @ApiProperty({ description: 'Уникальный идентификатор', example: "clx3968w80001klbslniv3jwf" })
+    @ApiProperty({ description: 'Уникальный идентификатор', example: "6721e775-3d68-4fc0-825e-d1e011fa9b19" })
     id: string;
     @ApiProperty({ description: 'Дата создания пользователя', example: '2023-06-29T11:35:09.918Z' })
     createdAt: Date;
@@ -29,6 +29,6 @@ export class UpdateUsersResponse {
 
 
 export class DeleteMessage {
-    @ApiProperty({ description: 'Удаление пользователя', example: "Пользователь успешно удален!" })
+    @ApiProperty({ description: 'Удаление пользователя', example: "Пользователь с ID = af16e3f1-bbce-4dcc-9308-e8994d7e9533 успешно удален!" })
     message: string
 }

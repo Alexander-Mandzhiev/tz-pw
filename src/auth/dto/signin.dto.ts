@@ -1,10 +1,10 @@
+import { MESSAGES, REGEX } from "@common/utils";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsString, Length, Matches, MinLength } from "class-validator";
-import { MESSAGES, REGEX } from "@auth/config/utils";
 
 export class SignInDTO {
 
-    @ApiProperty({ description: "Почтовый ящик пользователя", example: 'example@example.com' })
+    @ApiProperty({ description: "Почтовый ящик пользователя", example: 'test@test.com' })
     @IsNotEmpty()
     @MinLength(+MESSAGES.EMAIL_RULE_MESSAGE_LENGTH, { message: MESSAGES.EMAIL_RULE_MESSAGE })
     @IsEmail()

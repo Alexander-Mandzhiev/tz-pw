@@ -17,7 +17,6 @@ async function bootstrap() {
     .setTitle('Purrweb')
     .setDescription('Тестовое задание')
     .setVersion('1.0')
-    .addTag('Маршруты')
     .build()
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('swagger', app, document)

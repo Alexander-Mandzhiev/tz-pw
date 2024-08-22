@@ -13,7 +13,7 @@ import { GUARDS } from './guards';
   imports: [
     PassportModule,
     UsersModule,
-    JwtModule.registerAsync(options())
+    JwtModule.registerAsync(options()),
   ],
   controllers: [AuthController,],
   providers: [AuthService, UsersService, ...STRATEGIES, ...GUARDS]
