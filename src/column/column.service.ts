@@ -32,7 +32,12 @@ export class ColumnService {
     try {
       const userExist = await this.userService.findOne(userId)
       if (!userExist) { throw new BadRequestException('Нет доступа!'); }
-      const data = await this.prisma.column.findMany({ where: { userId }, select: { id: true, title: true, description: true, order: true, cards: { select: { id: true, text: true, order: true } } } })
+      const data = await this.prisma.column.findMany({
+        where: { userId }, select: {
+          id: true, title: true, description: true, order: true,
+          cards: { select: { id: true, text: true, order: true, comments: { select: { id: true, name: true, text: true, userId: true } } } }
+        }
+      })
       return { data }
     } catch (error) {
       throw new HttpException(`Произошла неожиданная ошибка получения колонок!`, HttpStatus.FORBIDDEN);
@@ -46,7 +51,17 @@ export class ColumnService {
 
       const column = await this.cacheManager.get<Column>(id)
       if (!column) {
-        const column = await this.prisma.column.findUnique({ where: { userId, id }, select: { id: true, title: true, description: true, order: true, cards: { select: { id: true, text: true, order: true } } } })
+        const column = await this.prisma.column.findUnique({
+          where: { userId, id },
+          select: {
+            id: true, title: true, description: true, order: true,
+            cards: {
+              select: {
+                id: true, text: true, order: true, comments: { select: { id: true, name: true, text: true, userId: true } }
+              }
+            }
+          }
+        })
         if (!column) { throw new NotFoundException() }
         await this.cacheManager.set(id, column, converToSeconds(this.configService.get("COLUMN_EXPIRATION_TIME")))
         return column

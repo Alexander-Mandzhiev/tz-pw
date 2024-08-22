@@ -30,7 +30,13 @@ export class CardService {
     try {
       const userExist = await this.columnService.findOne(userId, columnId)
       if (!userExist) { throw new BadRequestException('Нет доступа!'); }
-      const data = await this.prisma.card.findMany({ where: { columnId }, select: { id: true, text: true, order: true, columnId: true } })
+      const data = await this.prisma.card.findMany({
+        where: { columnId },
+        select: {
+          id: true, text: true, order: true, columnId: true,
+          comments: { select: { id: true, name: true, text: true, userId: true } }
+        }
+      })
       return { data }
     } catch (error) {
       throw new HttpException(`Произошла неожиданная ошибка получения карточек!`, HttpStatus.FORBIDDEN);
@@ -44,7 +50,12 @@ export class CardService {
 
       const card = await this.cacheManager.get<Card>(id)
       if (!card) {
-        const card = await this.prisma.card.findUnique({ where: { id }, select: { id: true, text: true, order: true, columnId: true } })
+        const card = await this.prisma.card.findUnique({
+          where: { id }, select: {
+            id: true, text: true, order: true, columnId: true,
+            comments: { select: { id: true, name: true, text: true, userId: true } }
+          }
+        })
         if (!card) { throw new NotFoundException() }
         await this.cacheManager.set(id, card, converToSeconds(this.configService.get("COLUMN_EXPIRATION_TIME")))
         return card
